@@ -25,17 +25,17 @@ public class RabbitMQConfig {
     private String jobsRoutingKey;
 
     @Bean
-    private DirectExchange pdfExchange() {
+    public DirectExchange pdfExchange() {
         return new DirectExchange(exchange, true, false);
     }
 
     @Bean
-    private DirectExchange deadLetterExchange() {
+    public DirectExchange deadLetterExchange() {
         return new DirectExchange(exchange + ".dlx", true, false);
     }
 
     @Bean
-    private Queue jobsQueue() {
+    public Queue jobsQueue() {
         return QueueBuilder
                 .durable(jobsQueue)
                 .withArgument("x-dead-letter-exchange", exchange + ".dlx")
@@ -44,14 +44,14 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    private Queue deadLetterQueue() {
+    public Queue deadLetterQueue() {
         return QueueBuilder
                 .durable(deadLetterQueue)
                 .build();
     }
 
     @Bean
-    private Binding jobsBinding(Queue jobsQueue, DirectExchange pdfExchange) {
+    public Binding jobsBinding(Queue jobsQueue, DirectExchange pdfExchange) {
         return BindingBuilder
                 .bind(jobsQueue)
                 .to(pdfExchange)
@@ -59,7 +59,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    private Binding deadLetterBinding(Queue deadLetterQueue, DirectExchange deadLetterExchange) {
+    public Binding deadLetterBinding(Queue deadLetterQueue, DirectExchange deadLetterExchange) {
         return BindingBuilder
                 .bind(deadLetterQueue)
                 .to(deadLetterExchange)
@@ -67,12 +67,12 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    private MessageConverter jsonMessageConverter() {
+    public MessageConverter jsonMessageConverter() {
         return new JacksonJsonMessageConverter();
     }
 
     @Bean
-    private RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(jsonMessageConverter());
         return template;

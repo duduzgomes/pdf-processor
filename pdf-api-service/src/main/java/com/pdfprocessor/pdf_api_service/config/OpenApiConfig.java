@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    private OpenAPI openAPI() {
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("PDF Processor API")

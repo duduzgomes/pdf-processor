@@ -1,31 +1,16 @@
-CREATE TYPE job_status AS ENUM (
-    'PENDING',
-    'PROCESSING',
-    'DONE',
-    'NOT_FOUND',
-    'FAILED',
-    'WEBHOOK_FAILED'
-);
-
-CREATE TYPE webhook_status AS ENUM (
-    'PENDING',
-    'DELIVERED',
-    'FAILED'
-);
-
 CREATE TABLE processing_jobs (
-    id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
-    status          job_status      NOT NULL DEFAULT 'PENDING',
-    file_key        VARCHAR(512)    NOT NULL,
-    expected_name   VARCHAR(255)    NOT NULL,
-    name_found      BOOLEAN,
-    webhook_url     VARCHAR(2048)   NOT NULL,
-    webhook_status  webhook_status  NOT NULL DEFAULT 'PENDING',
-    webhook_attempts INT            NOT NULL DEFAULT 0,
-    attempts        INT             NOT NULL DEFAULT 0,
-    error_message   TEXT,
-    created_at      TIMESTAMP       NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMP       NOT NULL DEFAULT NOW()
+    id               UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+    status           VARCHAR(50)   NOT NULL DEFAULT 'PENDING',
+    file_key         VARCHAR(512)  NOT NULL,
+    expected_name    VARCHAR(255)  NOT NULL,
+    name_found       BOOLEAN,
+    webhook_url      VARCHAR(2048) NOT NULL,
+    webhook_status   VARCHAR(50)   NOT NULL DEFAULT 'PENDING',
+    webhook_attempts INT           NOT NULL DEFAULT 0,
+    attempts         INT           NOT NULL DEFAULT 0,
+    error_message    TEXT,
+    created_at       TIMESTAMP     NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMP     NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_processing_jobs_status

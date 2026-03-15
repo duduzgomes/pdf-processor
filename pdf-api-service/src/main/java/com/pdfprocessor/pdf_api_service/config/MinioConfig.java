@@ -25,7 +25,7 @@ public class MinioConfig {
     private String bucket;
 
     @Bean
-    private MinioClient minioClient() {
+    public MinioClient minioClient() {
         MinioClient client = MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
@@ -35,7 +35,7 @@ public class MinioConfig {
         return client;
     }
 
-    private void ensureBucketExists(MinioClient client) {
+    public void ensureBucketExists(MinioClient client) {
         try {
             boolean exists = client.bucketExists(
                     BucketExistsArgs.builder().bucket(bucket).build()

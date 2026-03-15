@@ -4,6 +4,7 @@ package com.pdfprocessor.pdf_api_service.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,9 +31,10 @@ public class DocumentController {
     )
     public ResponseEntity<SubmitDocumentResponse> submit(
             @RequestPart("file") MultipartFile file,
-            @RequestPart("data") @Valid SubmitDocumentRequest request
+            @RequestParam("expectedName") @NotBlank String expectedName,
+            @RequestParam("webhookUrl") @NotBlank String webhookUrl
     ) {
-        SubmitDocumentResponse response = documentService.submit(file, request);
+        SubmitDocumentResponse response = documentService.submit(file,new SubmitDocumentRequest(expectedName, webhookUrl));
         return ResponseEntity.accepted().body(response);
     }
 }
