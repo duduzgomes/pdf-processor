@@ -1,0 +1,26 @@
+# Maven
+target/
+*.jar
+*.war
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Variáveis de ambiente — NUNCA versionar
+.env
+*.env
+
+# Logs
+*.log
+logs/
+
+# Spring Boot
+spring-shell.log
