@@ -1,3 +1,5 @@
+server:
+  port: 8080
 spring:
   application:
     name: pdf-api-service
@@ -15,10 +17,11 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        "[format_sql]": true
 
   flyway:
     enabled: true
@@ -51,9 +54,6 @@ rabbitmq:
   routing-key:
     jobs: pdf.jobs
 
-server:
-  port: 8080
-
 management:
   endpoints:
     web:
@@ -71,7 +71,7 @@ springdoc:
 
 logging:
   level:
-    com.pdfprocessor: DEBUG
-    org.springframework.amqp: INFO
+    "[com.pdfprocessor]": DEBUG
+    "[org.springframework.amqp]": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
