@@ -12,7 +12,7 @@ import com.pdfprocessor.pdf_api_service.services.DocumentService;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/jobs")
+@RequestMapping("/api/v1/jobs")
 @RequiredArgsConstructor
 @Tag(name = "Jobs", description = "Consulta de status dos jobs de processamento")
 public class JobController {

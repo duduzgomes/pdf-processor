@@ -37,37 +37,7 @@ tesseract:
 
 ## Como rodar
 
-### Desenvolvimento
-
-**1. Suba a infraestrutura:**
-
 ```bash
-docker-compose up -d postgres rabbitmq minio
-```
-
-**2. Suba a API:**
-
-```bash
-cd pdf-api-service
-./mvnw spring-boot:run
-```
-
-**3. Suba o Worker:**
-
-```bash
-cd pdf-worker-service
-./mvnw spring-boot:run
-```
-
-### Produção (Docker completo)
-
-```bash
-# Gere os JARs
-cd pdf-api-service && ./mvnw clean package -DskipTests
-cd ../pdf-worker-service && ./mvnw clean package -DskipTests
-
-# Suba tudo
-cd ..
 docker-compose up --build
 ```
 
@@ -160,6 +130,25 @@ Disponível em `http://localhost:8080/swagger-ui.html`
 | NOT_FOUND      | Processado — nome não encontrado           |
 | FAILED         | Erro no processamento                      |
 | WEBHOOK_FAILED | Processado mas falha na entrega do webhook |
+
+## Interfaces de monitoramento
+
+| Interface           | URL                                   | Usuário    | Senha      |
+| ------------------- | ------------------------------------- | ---------- | ---------- |
+| Swagger UI          | http://localhost:8080/swagger-ui.html | —          | —          |
+| RabbitMQ Management | http://localhost:15672                | guest      | guest      |
+| MinIO Console       | http://localhost:9001                 | minioadmin | minioadmin |
+
+### O que monitorar em cada interface
+
+**RabbitMQ** — acesse Queues para ver:
+
+- `pdf.jobs.queue` — mensagens aguardando processamento
+- `pdf.jobs.dlq` — mensagens que falharam após 3 tentativas
+
+**MinIO** — acesse Buckets → `pdf-documents` → `uploads/` para ver os PDFs armazenados no formato `uuid-nomeoriginal.pdf`
+
+**Swagger** — teste os endpoints diretamente sem precisar de cliente HTTP externo
 
 ## Tecnologias
 
