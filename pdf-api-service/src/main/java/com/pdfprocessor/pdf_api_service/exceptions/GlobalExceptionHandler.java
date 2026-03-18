@@ -58,6 +58,15 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno do servidor"));
     }
 
+    @ExceptionHandler(WebhookRegistrationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleWebhookNotFound(
+        WebhookRegistrationNotFoundException ex) {
+            log.warn("Webhook registration não encontrado: {}", ex.getMessage());
+            return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+}
+
     public record ErrorResponse(
             int status,
             String message,

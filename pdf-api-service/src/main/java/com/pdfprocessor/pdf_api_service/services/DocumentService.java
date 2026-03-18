@@ -2,8 +2,6 @@ package com.pdfprocessor.pdf_api_service.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,9 +10,12 @@ import com.pdfprocessor.pdf_api_service.dtos.JobStatusResponse;
 import com.pdfprocessor.pdf_api_service.dtos.SubmitDocumentRequest;
 import com.pdfprocessor.pdf_api_service.dtos.SubmitDocumentResponse;
 import com.pdfprocessor.pdf_api_service.entities.ProcessingJob;
+import com.pdfprocessor.pdf_api_service.entities.WebhookRegistration;
 import com.pdfprocessor.pdf_api_service.exceptions.JobNotFoundException;
+import com.pdfprocessor.pdf_api_service.exceptions.WebhookRegistrationNotFoundException;
 import com.pdfprocessor.pdf_api_service.messaging.JobPublisher;
 import com.pdfprocessor.pdf_api_service.repositories.ProcessingJobRepository;
+import com.pdfprocessor.pdf_api_service.repositories.WebhookRegistrationRepository;
 
 import java.util.UUID;
 
@@ -26,11 +27,16 @@ public class DocumentService {
     private final StorageService storageService;
     private final JobPublisher jobPublisher;
     private final ProcessingJobRepository jobRepository;
+    private final WebhookRegistrationRepository webhookRegistrationRepository;
 
     @Transactional
     public SubmitDocumentResponse submit(MultipartFile file, SubmitDocumentRequest request) {
 
         validateFile(file);
+
+        WebhookRegistration webhookRegistration = webhookRegistrationRepository
+            .findByIdAndActiveTrue(request.webhookRegistrationId())
+            .orElseThrow(() -> new WebhookRegistrationNotFoundException(request.webhookRegistrationId()));
 
         String fileKey = storageService.uploadFile(file);
 
@@ -39,7 +45,7 @@ public class DocumentService {
         ProcessingJob job = ProcessingJob.builder()
                 .fileKey(fileKey)
                 .expectedName(request.expectedName())
-                .webhookUrl(request.webhookUrl())
+                .webhookRegistration(webhookRegistration)
                 .build();
 
         job = jobRepository.save(job);
@@ -48,8 +54,7 @@ public class DocumentService {
         JobMessage message = new JobMessage(
                 job.getId(),
                 job.getFileKey(),
-                job.getExpectedName(),
-                job.getWebhookUrl()
+                job.getExpectedName()  
         );
 
         jobPublisher.publish(message);
@@ -79,7 +84,6 @@ public class DocumentService {
             throw new IllegalArgumentException("Somente arquivos PDF são aceitos");
         }
 
-        // 20MB em bytes
         long maxSize = 20L * 1024 * 1024;
         if (file.getSize() > maxSize) {
             throw new IllegalArgumentException("O arquivo não pode ultrapassar 20MB");
